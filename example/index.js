@@ -4,11 +4,8 @@ import { Navigation } from 'react-native-navigation';
 import App from './App';
 import {AppRegistry} from 'react-native';
 
-//AppRegistry.registerComponent = (key, func) => registerRootComponent(func(), key);
-
-AppRegistry.registerComponent('main', () => App);
-
-Navigation.registerComponent('main', () => App);
+Navigation.registerComponent('test', () => App);
+Navigation.registerComponent('test2', () => App);
 
 Navigation.events().registerAppLaunchedListener(() => {
     Navigation.setRoot({
@@ -17,8 +14,12 @@ Navigation.events().registerAppLaunchedListener(() => {
             children: [
               {
                 component: {
-                  id: '123-test',
-                  name: 'main',
+                  name: 'test',
+                }
+              },
+              {
+                component: {
+                  name: 'test2',
                 }
               }
             ]
@@ -26,8 +27,3 @@ Navigation.events().registerAppLaunchedListener(() => {
         }
     });
 });
-//AppRegistry.registerComponent('main', () => App);
-// registerRootComponent calls AppRegistry.registerComponent('main', () => App);
-// It also ensures that whether you load the app in Expo Go or in a native build,
-// the environment is set up appropriately
-//registerRootComponent(App, 'main');
