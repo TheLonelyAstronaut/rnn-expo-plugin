@@ -1,0 +1,1 @@
+eval "ln -s ./build ./example/node_modules/rnn-expo-plugin/"
