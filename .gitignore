@@ -85,3 +85,5 @@ android/
 !.yarn/versions
 
 rnn-expo-plugin-*
+
+build/*
