@@ -6768,9 +6768,9 @@ rimraf@~2.6.2:
   dependencies:
     glob "^7.1.3"
 
-rnn-expo-plugin@../rnn-expo-plugin-1.0.14.tgz:
-  version "1.0.14"
-  resolved "../rnn-expo-plugin-1.0.14.tgz#063c7fabbe96472203d2aea9134cfddeedc39912"
+rnn-expo-plugin@../rnn-expo-plugin-1.0.15.tgz:
+  version "1.0.15"
+  resolved "../rnn-expo-plugin-1.0.15.tgz#4fc89cfa4fae0efacf467871170d93e3462cb0c1"
 
 run-parallel@^1.1.9:
   version "1.2.0"

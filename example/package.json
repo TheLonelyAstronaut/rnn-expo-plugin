@@ -16,7 +16,7 @@
     "react-native-gesture-handler": "~2.12.0",
     "react-native-reanimated": "3.4.2",
     "react-native-navigation": "^7.39.1",
-    "rnn-expo-plugin": "../rnn-expo-plugin-1.0.14.tgz"
+    "rnn-expo-plugin": "../rnn-expo-plugin-1.0.15.tgz"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
