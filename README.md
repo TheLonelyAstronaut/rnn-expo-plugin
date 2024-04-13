@@ -1,4 +1,4 @@
-# React Native Navigation Expo Plugin 🍉
+# React Native Navigation Expo Plugin 🧭
 Config plugin to auto configure `react-native-navigation` by Wix!
 
 ## Install
@@ -6,7 +6,7 @@ Config plugin to auto configure `react-native-navigation` by Wix!
 > Tested against Expo SDK 49
 
 ```
-yarn add rnn-expo-plugin
+yarn add rnn-expo-plugin react-native-navigation
 ```
 
 > Please make sure you also install   **[expo-build-properties](https://docs.expo.dev/versions/latest/sdk/build-properties/)**
