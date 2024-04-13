@@ -1,2 +1,5 @@
 node_modules/**
 example/node_modules/**
+rnn-expo-plugin-*
+example/andorid/*
+example/ios/*

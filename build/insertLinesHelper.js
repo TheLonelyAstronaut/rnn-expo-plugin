@@ -18,11 +18,26 @@ const insertLinesHelper = (insert, target, contents, offset = 1, replace = 0) =>
                 return str.includes(target);
             });
             // Insert the wanted text around this anchor (i.e. offset / replace options)
-            newArray = [
-                ...array.slice(0, index + offset),
-                insert,
-                ...array.slice(index + offset + replace),
-            ];
+            if (index === -1) {
+                const str = array.join("\n");
+                const removableIndex = str.indexOf(target);
+                if (removableIndex !== -1) {
+                    const removed = str.split(target);
+                    const updatedContent = [removed[0], insert, removed[1]].join('');
+                    return updatedContent;
+                }
+                else {
+                    throw new Error(`[RNN Expo Plugin] Cant find pattern! (${target} -> ${insert})`);
+                }
+            }
+            else {
+                // Insert the wanted text around this anchor (i.e. offset / replace options)
+                newArray = [
+                    ...array.slice(0, index + offset),
+                    insert,
+                    ...array.slice(index + offset + replace),
+                ];
+            }
         }
         return newArray.join("\n");
     }

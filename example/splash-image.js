@@ -1,0 +1,1 @@
+export const preloadedSplashImage = require('./assets/splash.png')

@@ -3,8 +3,15 @@ import React, { useEffect } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 
 let test = 1;
+let wasSplashHidden = false;
 
 export default function App() {
+  useEffect(() => {
+    if (!wasSplashHidden) {
+      wasSplashHidden = true;
+    }
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text>Open up App.tsx to start working on your app! {test}</Text>
