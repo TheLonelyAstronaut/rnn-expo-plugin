@@ -1,5 +1,10 @@
 # React Native Navigation Expo Plugin 🧭
 Config plugin to auto configure `react-native-navigation` by Wix!
+This config changes internal source code of Expo SDK before prebuild, save your code before testing this lib to do not lose your progress.
+
+## Importnat: Expo Splash Screen usage
+
+There are some limitations in Expo Splash Screen usage. See details below.
 
 ## Install
 
@@ -23,7 +28,10 @@ In your app.json `plugins` array:
 {
   "plugins": [
       [
-        "rnn-expo-plugin"
+        "rnn-expo-plugin",
+        {
+          "setupAndroidSplash": true
+        }
       ],
       [
         "expo-build-properties",
@@ -40,6 +48,95 @@ In your app.json `plugins` array:
       ]
   ]
 }
+```
+
+## Expo Splash Screen usage
+
+React Navigation (and Expo Router) renders your app in single Activity/UIViewController, that's why you could use `preventAutoHideAsync()` and `hideAsync()` functions. However, RNN uses native navigation approach (One screen - one Activity/Fragment/UIViewController), and after initialization it automatically hides SplashScreen activity, so `preventAutoHideAsync()` and `hideAsync()` functions becomes useless.
+
+As a workaround, you could use such approach:
+```jsx
+// index.js
+
+// Register screens
+Navigation.registerComponent('home', () => Home);
+Navigation.registerComponent('splash', () => Splash);
+
+// Telling RNN that we dont want to hide native splash before RN finishes initial render, this helps to remove white flashes/glitches
+Navigation.setDefaultOptions({
+  animations: {
+      setRoot: {
+          waitForRender: true
+      }
+  }
+});
+
+// Register splash as single "JS" screen, similar to 'preventAutoHideAsync'
+Navigation.events().registerAppLaunchedListener(() => {
+    Navigation.setRoot({
+        root: {
+          stack: {
+            children: [
+              {
+                component: {
+                  name: 'splash',
+                  options: {
+                    topBar: {
+                      visible: false
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+    });
+});
+
+// Splash.tsx
+// Changing navigation tree (similar to hideAsync())
+function onLoadEnd() {
+    Navigation.setRoot({
+      root: {
+        stack: {
+          children: [
+            {
+              component: {
+                name: 'home',
+              },
+            },
+          ],
+        },
+      },
+    });
+}
+
+export const Splash = () => {
+  useEffect(() => {
+    // Do some logic here, ex. check logged in state
+    // ..
+    // Trigger to navigation tree change
+    onLoadEnd();
+  }, []);
+
+  return (
+        <Image
+            source={preloadedSplashImage}
+            style={{
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'blue'
+            }}
+        />
+  );
+};
+```
+To remove white glitches on Android, pass this parameter to plugin config (app.json):
+```json
+  [
+    "rnn-expo-plugin",
+    { "setupAndroidSplash": true }
+  ]
 ```
 
 ## Build errors with M1 architectures for simulators

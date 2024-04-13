@@ -1,3 +1,4 @@
+import { hideAsync, preventAutoHideAsync } from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';

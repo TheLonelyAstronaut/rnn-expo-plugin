@@ -26,7 +26,12 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "rnn-expo-plugin",
+      [
+        "rnn-expo-plugin",
+        {
+          "setupAndroidSplash": true
+        }
+      ],
       [
         "expo-build-properties",
         {

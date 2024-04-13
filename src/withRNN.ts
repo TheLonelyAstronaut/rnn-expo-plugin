@@ -14,6 +14,7 @@ const fs = filesys.promises;
 
 type Options = {
   excludeSimArch?: boolean;
+  setupAndroidSplash?: boolean;
 }
 /**
  * Exclude building for arm64 on simulator devices in the pbxproj project.
@@ -182,7 +183,7 @@ function configureIOS(_config: ExpoConfig, options: Options) {
   ]);
 }
 
-function configureAndroid(_config: ExpoConfig) {
+function configureAndroid(_config: ExpoConfig, options: Options) {
   // @ts-ignore
   _config = withMainActivity(_config, (config) => {
     let content = config.modResults.contents; 
@@ -194,6 +195,21 @@ function configureAndroid(_config: ExpoConfig) {
       0,
       1
     );
+
+    if (options?.setupAndroidSplash === true) {
+      content = insertLinesHelper(
+        `import expo.modules.splashscreen.NativeResourcesBasedSplashScreenViewProvider;
+import expo.modules.splashscreen.SplashScreenImageResizeMode;`,
+        "import com.reactnativenavigation.NavigationActivity;",
+        content,
+      );
+
+      content = insertLinesHelper(
+        `    setContentView(new NativeResourcesBasedSplashScreenViewProvider(SplashScreenImageResizeMode.CONTAIN).createSplashScreenView(getApplicationContext()));`,
+        "super.onCreate(null);",
+        content,
+      );
+    }
 
     content = insertLinesHelper(
       'public class MainActivity extends NavigationActivity {',
@@ -328,7 +344,7 @@ export default (config, options) => {
 
   config = modifyCoreDependencies(config);
   config = configureIOS(config, options);
-  config = configureAndroid(config);
+  config = configureAndroid(config, options);
 
   return config;
 };
