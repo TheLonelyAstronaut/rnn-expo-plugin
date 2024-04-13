@@ -2,7 +2,7 @@
 Config plugin to auto configure `react-native-navigation` by Wix!
 This config changes internal source code of Expo SDK before prebuild, save your code before testing this lib to do not lose your progress.
 
-## Importnat: Expo Splash Screen usage
+## Important: Expo Splash Screen usage
 
 There are some limitations in Expo Splash Screen usage. See details below.
 
@@ -124,8 +124,7 @@ export const Splash = () => {
             source={preloadedSplashImage}
             style={{
                 width: '100%',
-                height: '100%',
-                backgroundColor: 'blue'
+                height: '100%'
             }}
         />
   );
