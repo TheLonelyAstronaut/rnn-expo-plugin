@@ -138,6 +138,18 @@ To remove white glitches on Android, pass this parameter to plugin config (app.j
   ]
 ```
 
+## Monorepos (Nx and other)
+
+Due to 'common node_nodules' monorepo pattern, there are some troubles with linking library headers. If you use monorepo solution, specify path to RNNAppDelegate.h file in app.json, for example:
+
+```json
+  [
+    "rnn-expo-plugin",
+    { "monorepoPathForDelegateHeader": "../../../ReactNativeNavigation/ReactNativeNavigation.framework/Headers/RNNAppDelegate.h" }
+  ]
+```
+Will be removed in future versions and this process will be automated.
+
 ## Build errors with M1 architectures for simulators
 
 There have been errors building with M1 architectures for simulators on iOS, with Error:

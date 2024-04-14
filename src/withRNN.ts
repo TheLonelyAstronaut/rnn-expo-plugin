@@ -15,6 +15,7 @@ const fs = filesys.promises;
 type Options = {
   excludeSimArch?: boolean;
   setupAndroidSplash?: boolean;
+  monorepoPathForDelegateHeader?: string;
 }
 /**
  * Exclude building for arm64 on simulator devices in the pbxproj project.
@@ -69,11 +70,11 @@ async function prepareAppDelegate(path: string) {
   await fs.writeFile(path, updated);
 }
 
-async function swapCoreModulesDelegate(path: string) {
+async function swapCoreModulesDelegate(path: string, headerPath: string) {
   const contents = await fs.readFile(path, "utf-8");
 
   let updated = insertLinesHelper(
-    '#import "RNNAppDelegate.h"',
+    headerPath,
     "#import <ExpoModulesCore/EXReactDelegateWrapper.h>",
     contents
   );
@@ -172,7 +173,7 @@ function configureIOS(_config: ExpoConfig, options: Options) {
       const iosModulesCorePath = `${root}/node_modules/expo-modules-core/ios/AppDelegates/EXAppDelegateWrapper.h`;
 
       await prepareAppDelegate(`${config.modRequest.platformProjectRoot}/${config.modRequest.projectName}/AppDelegate.mm`)
-      await swapCoreModulesDelegate(iosModulesCorePath);
+      await swapCoreModulesDelegate(iosModulesCorePath, !!options?.monorepoPathForDelegateHeader ? `#import "${options?.monorepoPathForDelegateHeader}"` : '#import "RNNAppDelegate.h"');
 
       if (options?.excludeSimArch === true) {
         _config = withExcludedSimulatorArchitectures(_config);
