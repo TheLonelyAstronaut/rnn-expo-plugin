@@ -1,6 +1,6 @@
 {
   "name": "rnn-expo-plugin",
-  "version": "49.0.23-next",
+  "version": "50.0.1",
   "main": "build/withRNN.js",
   "types": "build/withRNN.d.ts",
   "license": "MIT",
