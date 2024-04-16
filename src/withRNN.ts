@@ -184,7 +184,34 @@ function configureIOS(_config: ExpoConfig, options: Options) {
   ]);
 }
 
+function configureGradleFiles(_config: ExpoConfig, options: Options) {
+  // @ts-ignore
+  _config = withProjectBuildGradle(_config, (config) => {
+    let content = config.modResults.contents; 
+
+    content = insertLinesHelper(
+      "        RNNKotlinVersion = kotlinVersion",
+      "kotlinVersion =",
+      content,
+    );
+
+    content = insertLinesHelper(
+      '        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")',
+      "classpath('com.facebook.react:react-native-gradle-plugin')",
+      content,
+    );
+
+    config.modResults.contents = content;
+
+    return config;
+  });
+
+  return _config;
+}
+
 function configureAndroid(_config: ExpoConfig, options: Options) {
+  _config = configureGradleFiles(_config, options);
+
   // @ts-ignore
   _config = withMainActivity(_config, (config) => {
     let content = config.modResults.contents; 
@@ -246,27 +273,6 @@ import expo.modules.splashscreen.SplashScreenImageResizeMode;`,
       content,
       0,
       1
-    );
-
-    config.modResults.contents = content;
-
-    return config;
-  });
-
-  // @ts-ignore
-  _config = withProjectBuildGradle(_config, (config) => {
-    let content = config.modResults.contents; 
-
-    content = insertLinesHelper(
-      "        RNNKotlinVersion = kotlinVersion",
-      "kotlinVersion =",
-      content,
-    );
-
-    content = insertLinesHelper(
-      '        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")',
-      "classpath('com.facebook.react:react-native-gradle-plugin')",
-      content,
     );
 
     config.modResults.contents = content;
@@ -337,15 +343,143 @@ import com.reactnativenavigation.react.NavigationReactNativeHost;`,
   return _config;
 }
 
+function configureAndroidSDK50(_config: ExpoConfig, options: Options) {
+  _config = configureGradleFiles(_config, options);
+
+  // @ts-ignore
+  _config = withMainActivity(_config, (config) => {
+    let content = config.modResults.contents; 
+
+    content = insertLinesHelper(
+      "import com.reactnativenavigation.NavigationActivity",
+      "import com.facebook.react.ReactActivity",
+      content,
+      0,
+      1
+    );
+
+    if (options?.setupAndroidSplash === true) {
+      content = insertLinesHelper(
+        `import expo.modules.splashscreen.NativeResourcesBasedSplashScreenViewProvider
+import expo.modules.splashscreen.SplashScreenImageResizeMode`,
+        "import com.reactnativenavigation.NavigationActivity",
+        content,
+      );
+
+      content = insertLinesHelper(
+        `    contentView = NativeResourcesBasedSplashScreenViewProvider(SplashScreenImageResizeMode.CONTAIN).createSplashScreenView(applicationContext)`,
+        "super.onCreate(null)",
+        content,
+      );
+    }
+
+    content = insertLinesHelper(
+      'class MainActivity : NavigationActivity() {',
+      "class MainActivity : ReactActivity() {",
+      content,
+      0,
+      1
+    );
+
+    content = insertLinesHelper(
+      '// Removed by rnn-expo-plugin (1)',
+      `override fun getMainComponentName(): String = "main"`,
+      content,
+      0,
+      1
+    );
+
+    content = insertLinesHelper(
+      '\n  // Removed by rnn-expo-plugin (2)',
+      `
+  override fun createReactActivityDelegate(): ReactActivityDelegate {
+    return ReactActivityDelegateWrapper(
+          this,
+          BuildConfig.IS_NEW_ARCHITECTURE_ENABLED,
+          object : DefaultReactActivityDelegate(
+              this,
+              mainComponentName,
+              fabricEnabled
+          ){})
+  }`,
+      content,
+      0,
+      1
+    );
+
+    config.modResults.contents = content;
+
+    return config;
+  });
+
+  // @ts-ignore
+  _config = withMainApplication(_config, (config) => {
+    let content = config.modResults.contents; 
+
+    content = insertLinesHelper(
+      `import com.reactnativenavigation.NavigationApplication
+import com.reactnativenavigation.react.NavigationReactNativeHost`,
+      "import com.facebook.react.ReactApplication",
+      content,
+      0,
+      1
+    );
+
+    content = insertLinesHelper(
+      `class MainApplication : NavigationApplication()  {`,
+      "class MainApplication : Application(), ReactApplication {",
+      content,
+      0,
+      1
+    );
+
+    content = insertLinesHelper(
+      `object : NavigationReactNativeHost(this) {`,
+      `ReactNativeHostWrapper(
+        this,
+        object : DefaultReactNativeHost(this) {`,
+      content,
+      0,
+      1
+    );
+
+    content = insertLinesHelper(
+      `  override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
+  }`,
+      `  override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
+      }
+  )`,
+      content,
+      0,
+      1
+    );
+
+    content = insertLinesHelper(
+      '// Removed by rnn-expo-plugin (1)',
+      "SoLoader.init(this, false)",
+      content,
+      0,
+      1
+    );
+
+    config.modResults.contents = content;
+
+    return config;
+  });
+
+  return _config;
+} 
+
 // @ts-ignore
 export default (config, options) => {
   if (config.sdkVersion >= '50.0.0') {
-    throw new Error('SDK 50 is not supported yet!');
-  };
+    config = configureAndroidSDK50(config, options);
+  } else {
+    config = configureAndroid(config, options);
+  }
 
   config = modifyCoreDependencies(config);
   config = configureIOS(config, options);
-  config = configureAndroid(config, options);
 
   return config;
 };
