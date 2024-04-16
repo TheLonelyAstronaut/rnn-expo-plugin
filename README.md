@@ -8,7 +8,7 @@ There are some limitations in Expo Splash Screen usage. See details below.
 
 ## Install
 
-> Tested against Expo SDK 49
+> Tested against Expo SDK 49 and SDK 50
 
 ```
 yarn add rnn-expo-plugin react-native-navigation
@@ -41,6 +41,35 @@ In your app.json `plugins` array:
             "packagingOptions": {
               "pickFirst": [
                 "**/libc++_shared.so"
+              ]
+            }
+          }
+        }
+      ]
+  ]
+}
+```
+
+## Usage with Fabic and New Architecture (SDK 50)
+
+Use following config (ap.json):
+```json
+{
+  "plugins": [
+      "rnn-expo-plugin",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "newArchEnabled": true
+          },
+          "android": {
+            "kotlinVersion": "1.8.0",
+            "newArchEnabled": true,
+            "packagingOptions": {
+              "pickFirst": [
+                "**/libc++_shared.so",
+                "**/libreact_utils.so"
               ]
             }
           }
