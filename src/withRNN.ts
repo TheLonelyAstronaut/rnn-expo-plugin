@@ -165,6 +165,28 @@ function modifyCoreDependencies(config: ExportedConfigWithProps) {
   ]);
 }
 
+function configureIOSSDK50(_config: ExpoConfig, options: Options) {
+  return withDangerousMod(_config, [
+    "ios",
+    async (config) => {
+      const root = config.modRequest.projectRoot;
+      const path = `${root}/node_modules/react-native-navigation/lib/ios/RNNReactView.mm`;
+
+      const contents = await fs.readFile(path, "utf-8");
+
+      let updated = insertLinesHelper(
+        "  [surface start];",
+        "self = [super initWithSurface:surface sizeMeasureMode:sizeMeasureMode];",
+        contents
+      );
+
+      await fs.writeFile(path, updated);
+
+      return config;
+    },
+  ]);
+}
+
 function configureIOS(_config: ExpoConfig, options: Options) {
   return withDangerousMod(_config, [
     "ios",
@@ -473,6 +495,7 @@ import com.reactnativenavigation.react.NavigationReactNativeHost`,
 // @ts-ignore
 export default (config, options) => {
   if (config.sdkVersion >= '50.0.0') {
+    config = configureIOSSDK50(config, options);
     config = configureAndroidSDK50(config, options);
   } else {
     config = configureAndroid(config, options);
