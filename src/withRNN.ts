@@ -170,9 +170,10 @@ function configureIOSSDK50(_config: ExpoConfig, options: Options) {
     "ios",
     async (config) => {
       const root = config.modRequest.projectRoot;
-      const path = `${root}/node_modules/react-native-navigation/lib/ios/RNNReactView.mm`;
+      const rnnPath = `${root}/node_modules/react-native-navigation/lib/ios/RNNReactView.mm`;
+      const iosModulesCorePath = `${root}/node_modules/expo-modules-core/ios/AppDelegates/EXAppDelegateWrapper.mm`;
 
-      const contents = await fs.readFile(path, "utf-8");
+      let contents = await fs.readFile(rnnPath, "utf-8");
 
       let updated = insertLinesHelper(
         "  [surface start];",
@@ -180,7 +181,18 @@ function configureIOSSDK50(_config: ExpoConfig, options: Options) {
         contents
       );
 
-      await fs.writeFile(path, updated);
+      await fs.writeFile(rnnPath, updated);
+
+      contents = await fs.readFile(iosModulesCorePath, "utf-8");
+
+      // it's safe, cause we have guard preprocessor, that wraps this line
+      updated = insertLinesHelper(
+        "  enableFabric = YES;",
+        "enableFabric = self.fabricEnabled;",
+        contents
+      );
+
+      await fs.writeFile(iosModulesCorePath, updated);
 
       return config;
     },
