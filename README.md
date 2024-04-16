@@ -54,7 +54,7 @@ In your app.json `plugins` array:
 
 React Navigation (and Expo Router) renders your app in single Activity/UIViewController, that's why you could use `preventAutoHideAsync()` and `hideAsync()` functions. However, RNN uses native navigation approach (One screen - one Activity/Fragment/UIViewController), and after initialization it automatically hides SplashScreen activity, so `preventAutoHideAsync()` and `hideAsync()` functions becomes useless.
 
-As a workaround, you could use such approach:
+As a workaround, you could use this approach:
 ```jsx
 // index.js
 
