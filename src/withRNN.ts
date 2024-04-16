@@ -179,8 +179,6 @@ function configureIOSSDK50(_config: ExpoConfig, options: Options) {
         "  [surface start];",
         "self = [super initWithSurface:surface sizeMeasureMode:sizeMeasureMode];",
         contents,
-        0,
-        1
       );
 
       await fs.writeFile(rnnPath, updated);
@@ -191,7 +189,9 @@ function configureIOSSDK50(_config: ExpoConfig, options: Options) {
       updated = insertLinesHelper(
         "  enableFabric = YES;",
         "enableFabric = self.fabricEnabled;",
-        contents
+        contents,
+        0,
+        1
       );
 
       await fs.writeFile(iosModulesCorePath, updated);
