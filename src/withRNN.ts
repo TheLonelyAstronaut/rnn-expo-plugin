@@ -178,7 +178,9 @@ function configureIOSSDK50(_config: ExpoConfig, options: Options) {
       let updated = insertLinesHelper(
         "  [surface start];",
         "self = [super initWithSurface:surface sizeMeasureMode:sizeMeasureMode];",
-        contents
+        contents,
+        0,
+        1
       );
 
       await fs.writeFile(rnnPath, updated);
