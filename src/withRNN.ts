@@ -170,10 +170,10 @@ function configureIOSSDK50(_config: ExpoConfig, options: Options) {
     "ios",
     async (config) => {
       const root = config.modRequest.projectRoot;
-      const rnnPath = `${root}/node_modules/react-native-navigation/lib/ios/RNNReactView.mm`;
+      const rnnPath = `${root}/node_modules/react-native-navigation/lib/ios/`;
       const iosModulesCorePath = `${root}/node_modules/expo-modules-core/ios/AppDelegates/EXAppDelegateWrapper.mm`;
 
-      let contents = await fs.readFile(rnnPath, "utf-8");
+      let contents = await fs.readFile(rnnPath + 'RNNReactView.mm', "utf-8");
 
       let updated = insertLinesHelper(
         "  [surface start];",
@@ -181,7 +181,19 @@ function configureIOSSDK50(_config: ExpoConfig, options: Options) {
         contents,
       );
 
-      await fs.writeFile(rnnPath, updated);
+      await fs.writeFile(rnnPath + 'RNNReactView.mm', updated);
+
+      contents = await fs.readFile(rnnPath + 'UIViewController+LayoutProtocol.m', "utf-8");
+
+      updated = insertLinesHelper(
+        "    // Removed by rnn-expo-plugin",
+        "[self.presentedViewController destroy];",
+        contents,
+        0,
+        1
+      );
+
+      await fs.writeFile(rnnPath + 'UIViewController+LayoutProtocol.m', updated);
 
       contents = await fs.readFile(iosModulesCorePath, "utf-8");
 
@@ -403,7 +415,7 @@ import expo.modules.splashscreen.SplashScreenImageResizeMode`,
       );
 
       content = insertLinesHelper(
-        `    contentView = NativeResourcesBasedSplashScreenViewProvider(SplashScreenImageResizeMode.CONTAIN).createSplashScreenView(applicationContext)`,
+        `    setContentView(NativeResourcesBasedSplashScreenViewProvider(SplashScreenImageResizeMode.CONTAIN).createSplashScreenView(applicationContext))`,
         "super.onCreate(null)",
         content,
       );
