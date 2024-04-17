@@ -102,22 +102,20 @@ Navigation.setDefaultOptions({
 
 // Register splash as single "JS" screen, similar to 'preventAutoHideAsync'
 Navigation.events().registerAppLaunchedListener(() => {
-    Navigation.setRoot({
-        root: {
-          stack: {
-            children: [
-              {
-                component: {
-                  name: 'splash',
-                  options: {
-                    topBar: {
-                      visible: false
+    Navigation.showModal({
+        component: {
+            name: 'splash',
+            options: {
+                topBar: {
+                    visible: false
+                },
+                animations: {
+                    showModal: {
+                        enabled: false
                     }
-                  }
-                }
-              }
-            ]
-          }
+                },
+                modalPresentationStyle: 'overFullScreen'
+            }
         }
     });
 });
